@@ -202,6 +202,7 @@ def _assembleRefinmentOptions(domain):
                 dcon['index'] = (np.array(dcon['index'])+shape.start_region).tolist()
 
 def writeGeo(domain, fileprefix, group_names=False):
+    self = domain
     self.geofile = fileprefix+'.geo'
     self.polyfile = fileprefix
     geo = open(self.geofile,'w')
@@ -212,7 +213,6 @@ def writeGeo(domain, fileprefix, group_names=False):
     sN = len(self.segments)
 
     # Vertices
-    print self.vertices
     geo.write('\n// Points\n')
     z = 0
     for i, v in enumerate(self.vertices):
@@ -262,7 +262,6 @@ def writeGeo(domain, fileprefix, group_names=False):
             for j, subf in enumerate(f):
                 lineloop = []
                 # vertices in facet
-                print 'subf'+str(subf)
                 for k, ver in enumerate(subf):
                     if ver in lines_dict[subf[k-1]].keys():
                         lineloop += [lines_dict[subf[k-1]][ver]+1]
@@ -278,7 +277,6 @@ def writeGeo(domain, fileprefix, group_names=False):
                 geo.write('Line Loop(%d) = {%s};\n' % (lineloop_count+1, str(lineloop)[1:-1]))
                 lineloops += [lineloop_count+1]
                 lineloop_count += 1
-                # print i, j
             surface_line_list += [line_list]
             geo.write('Plane Surface(%d) = {%s};\n' % (i+1, str(lineloops)[1:-1]))
             if self.facetFlags:
