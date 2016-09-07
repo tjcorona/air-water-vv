@@ -202,14 +202,6 @@ def _assembleRefinmentOptions(domain):
                 dcon['index'] = (np.array(dcon['index'])+shape.start_region).tolist()
 
 def writeGeo(domain, fileprefix, group_names=False):
-    """
-    Write the PSLG using gmsh geo format incomplete write now
-    probably run into problems with orientation, no concept of a
-    line loop dummyAxis (0,1,2) is the remaining axis for
-    embedding the 2d geometry in 3d and xref is the constant value
-    for that axis
-    """
-    self = domain
     self.geofile = fileprefix+'.geo'
     self.polyfile = fileprefix
     geo = open(self.geofile,'w')
@@ -220,10 +212,10 @@ def writeGeo(domain, fileprefix, group_names=False):
     sN = len(self.segments)
 
     # Vertices
+    print self.vertices
     geo.write('\n// Points\n')
     z = 0
     for i, v in enumerate(self.vertices):
-        print v
         if self.nd == 3:
             z = v[2]
         geo.write("Point(%d) = {%g,%g,%g};\n" % (i+1,v[0],v[1], z))
@@ -270,6 +262,7 @@ def writeGeo(domain, fileprefix, group_names=False):
             for j, subf in enumerate(f):
                 lineloop = []
                 # vertices in facet
+                print 'subf'+str(subf)
                 for k, ver in enumerate(subf):
                     if ver in lines_dict[subf[k-1]].keys():
                         lineloop += [lines_dict[subf[k-1]][ver]+1]
@@ -282,11 +275,12 @@ def writeGeo(domain, fileprefix, group_names=False):
                         geo.write('Line(%d) = {%d,%d};\n' % (ind, subf[k-1]+1, ver+1))
                         lineloop += [ind]
                 line_list += lineloop
+                geo.write('Line Loop(%d) = {%s};\n' % (lineloop_count+1, str(lineloop)[1:-1]))
+                lineloops += [lineloop_count+1]
                 lineloop_count += 1
-                geo.write('Line Loop(%d) = {%s};\n' % (lineloop_count, str(lineloop)[1:-1]))
-                lineloops += [lineloop_count]
+                # print i, j
             surface_line_list += [line_list]
-            geo.write('Plane Surface(%d) = {%s};\n' % (lineloop_count, str(lineloops)[1:-1]))
+            geo.write('Plane Surface(%d) = {%s};\n' % (i+1, str(lineloops)[1:-1]))
             if self.facetFlags:
                 flag = self.facetFlags[i]
                 if flag in ps:
