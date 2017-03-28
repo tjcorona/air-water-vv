@@ -61,8 +61,8 @@ opts=Context.Options([
     # numerical options
     ("GenZone", True, 'Turn on generation zone at left side'),
     ("AbsZone", True, 'Turn on absorption zone at right side'),
-    ("refinement_level", 0.0,"he=walength/refinement_level"),
-    ("he", 0.02,"he=walength/refinement_level"),
+    ("refinement_level", 50.0,"he=walength/refinement_level"),
+    ("he", 0.0,"he=walength/refinement_level"),
     ("cfl", 0.450 ,"Target cfl"),
     ("duration", 20., "Durarion of the simulation"),
     ("freezeLevelSet", True, "No motion to the levelset"),
@@ -414,7 +414,7 @@ if opts.Resistance=='Engelund':
 
 #Proteus scale in viscosity, so i need to divide alpha and beta by nu_0
 dragAlpha=(porosity**2)*Alpha/nu_0
-dragBeta=0.0#(porosity**3)*Beta/nu_0
+dragBeta=(porosity**3)*Beta/nu_0
 
 #----- Spring setup
 
